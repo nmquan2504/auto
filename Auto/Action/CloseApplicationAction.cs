@@ -37,10 +37,28 @@ namespace Auto
         {
             Thread.Sleep(this.Delay);
             IntPtr hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
-            while (hWnd != IntPtr.Zero)
+            if (hWnd != IntPtr.Zero)
             {
-                SendMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-                hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
+                while (hWnd != IntPtr.Zero)
+                {
+                    SendMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                    hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
+                }
+            }
+            else
+            {
+                Process[] processes = Process.GetProcesses();
+                if (processes != null && processes.Length > 0)
+                {
+                    foreach (Process process in processes)
+                    {
+                        if (process.ProcessName.ToLower().Equals(this.ApplicationName.ToString()) && process.MainWindowTitle.Contains(this.ApplicationTitle))
+                        {
+                            process.CloseMainWindow();
+                            break;
+                        }
+                    }
+                }
             }
         }
 
