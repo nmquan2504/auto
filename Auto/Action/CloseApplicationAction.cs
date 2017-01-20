@@ -23,9 +23,11 @@ namespace Auto
             if (s != null && s.Length > 0)
             {
                 // Application Path
+                this.ApplicationName = "";
                 this.ApplicationName = s[2];
 
                 // Application Title
+                this.ApplicationTitle = "";
                 if (s.Length >= 4)
                 {
                     this.ApplicationTitle = s[3];
@@ -36,6 +38,7 @@ namespace Auto
         public override void Run()
         {
             Thread.Sleep(this.Delay);
+
             IntPtr hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
             if (hWnd != IntPtr.Zero)
             {
@@ -45,18 +48,16 @@ namespace Auto
                     hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
                 }
             }
-            else
+            
+            Process[] processes = Process.GetProcesses();
+            if (processes != null && processes.Length > 0)
             {
-                Process[] processes = Process.GetProcesses();
-                if (processes != null && processes.Length > 0)
+                foreach (Process process in processes)
                 {
-                    foreach (Process process in processes)
+                    if (process.ProcessName.ToLower().Equals(this.ApplicationName.ToLower().ToString()) && process.MainWindowTitle.ToLower().Contains(this.ApplicationTitle.ToLower()))
                     {
-                        if (process.ProcessName.ToLower().Equals(this.ApplicationName.ToString()) && process.MainWindowTitle.Contains(this.ApplicationTitle))
-                        {
-                            process.CloseMainWindow();
-                            break;
-                        }
+                        process.CloseMainWindow();
+                        break;
                     }
                 }
             }
