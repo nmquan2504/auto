@@ -11,7 +11,7 @@ namespace Auto
 {
     class CloseApplicationAction : Action
     {
-        public override string Command { get => "Close"; }
+        public override string ActionCommand { get => "Close"; }
 
         public string ApplicationName { get; set; }
 
@@ -19,7 +19,7 @@ namespace Auto
 
         public CloseApplicationAction(string actionText) : base(actionText)
         {
-            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            string[] s = this.ActionText.Split(new string[] { Action.ActionParameterSeparator }, StringSplitOptions.None);
             if (this.IsValid && s != null && s.Length > 0)
             {
                 // Application Path
@@ -37,7 +37,6 @@ namespace Auto
 
         public override void Run()
         {
-            Console.WriteLine($"{this.Command} ({this.ApplicationName}, {this.ApplicationTitle})");
             IntPtr hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
             if (hWnd != IntPtr.Zero)
             {
@@ -59,6 +58,18 @@ namespace Auto
                         break;
                     }
                 }
+            }
+        }
+
+        public override string ToString()
+        {
+            if (!string.IsNullOrWhiteSpace(this.ApplicationTitle))
+            {
+                return $"{this.ActionCommand} ({this.ApplicationName}, {this.ApplicationTitle}) {this.ActionComment}".Trim();
+            }
+            else
+            {
+                return $"{this.ActionCommand} ({this.ApplicationName}) {this.ActionComment}".Trim();
             }
         }
 

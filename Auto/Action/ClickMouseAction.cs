@@ -29,7 +29,7 @@ namespace Auto
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetCursorPos(uint x, uint y);
 
-        public override string Command { get => "Click"; }
+        public override string ActionCommand { get => "Click"; }
 
         public string Button { get; set; }
 
@@ -39,7 +39,7 @@ namespace Auto
 
         public ClickMouseAction(string actionText) : base(actionText)
         {
-            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            string[] s = this.ActionText.Split(new string[] { Action.ActionParameterSeparator }, StringSplitOptions.None);
             if (this.IsValid && s != null && s.Length > 0)
             {
                 // Button
@@ -63,7 +63,6 @@ namespace Auto
 
         public override void Run()
         {
-            Console.WriteLine($"{this.Command} ({this.Button}, {this.X}, {this.Y})");
             SetCursorPos(this.X, this.Y);
             Thread.Sleep(50);
             uint button = MOUSEEVENTF_LEFTDOWN;
@@ -94,6 +93,11 @@ namespace Auto
                 button = MOUSEEVENTF_MIDDLEUP;
             }
             mouse_event(button, 0, 0, 0, 0);
+        }
+
+        public override string ToString()
+        {
+            return $"{this.ActionCommand} ({this.Button}, {this.X}, {this.Y}) {this.ActionComment}".Trim();
         }
     }
 }

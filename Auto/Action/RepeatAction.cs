@@ -11,13 +11,13 @@ namespace Auto
 {
     class RepeatAction : Action
     {
-        public override string Command { get => "Repeat"; }
+        public override string ActionCommand { get => "Repeat"; }
 
         public uint RepeatCount { get; set; }
 
         public RepeatAction(string actionText) : base(actionText)
         {
-            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            string[] s = this.ActionText.Split(new string[] { Action.ActionParameterSeparator }, StringSplitOptions.None);
             if (this.IsValid && s != null && s.Length > 0)
             {
                 // LoopCount
@@ -33,17 +33,27 @@ namespace Auto
         {
             if (this.RepeatCount > 0)
             {
-                Console.WriteLine($"{this.Command} ({this.RepeatCount})");
                 this.RepeatCount--;
             }
             else
             {
-                Console.WriteLine($"Stop");
                 Process p = Process.GetCurrentProcess();
                 if (p != null)
                 {
                     p.Kill();
                 }
+            }
+        }
+
+        public override string ToString()
+        {
+            if (this.RepeatCount > 0)
+            {
+                return $"{this.ActionCommand} ({this.RepeatCount}) {this.ActionComment}".Trim();
+            }
+            else
+            {
+                return $"Stop {this.ActionComment}".Trim();
             }
         }
     }

@@ -38,9 +38,13 @@ namespace Auto
                                 var action = Action.CreateAction(s);
                                 if (action != null)
                                 {
-                                    Console.WriteLine($"Action '{s}'");
+                                    Console.WriteLine($"Action '{action.ToString()}'");
+                                    actions.Add(action);
                                 }
-                                actions.Add(action);
+                                else
+                                {
+                                    throw new Exception();
+                                }
                             }
                         }
                         catch (Exception)
@@ -68,6 +72,7 @@ namespace Auto
                         Action action = actions[nCurrentActionIndex];
                         if (action != null)
                         {
+                            Console.WriteLine(action.ToString());
                             action.Run();
                         }
                     }

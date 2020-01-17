@@ -963,13 +963,13 @@ namespace Auto
         [DllImport("user32.dll")]
         internal static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
 
-        public override string Command { get => "Type"; }
+        public override string ActionCommand { get => "Type"; }
 
         public string Text { get; set; }
 
         public TypeTextAction(string actionText) : base(actionText)
         {
-            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            string[] s = this.ActionText.Split(new string[] { Action.ActionParameterSeparator }, StringSplitOptions.None);
             if (this.IsValid && s != null && s.Length > 0)
             {
                 // Text
@@ -1040,8 +1040,12 @@ namespace Auto
 
         public override void Run()
         {
-            Console.WriteLine($"{this.Command} ({this.Text})");
             this.SendString(this.Text);
+        }
+
+        public override string ToString()
+        {
+            return $"{this.ActionCommand} ({this.Text}) {this.ActionComment}".Trim();
         }
     }
 }

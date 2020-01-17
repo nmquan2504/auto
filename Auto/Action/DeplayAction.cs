@@ -9,13 +9,13 @@ namespace Auto
 {
     class DelayAction : Action
     {
-        public override string Command { get => "Delay"; }
+        public override string ActionCommand { get => "Delay"; }
 
         public int Time { get; set; }
 
         public DelayAction(string actionText) : base(actionText)
         {
-            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            string[] s = this.ActionText.Split(new string[] { Action.ActionParameterSeparator }, StringSplitOptions.None);
             if (this.IsValid && s != null && s.Length > 0)
             {
                 // X
@@ -29,8 +29,12 @@ namespace Auto
 
         public override void Run()
         {
-            Console.WriteLine($"{this.Command} ({this.Time})");
             Thread.Sleep(this.Time);
+        }
+
+        public override string ToString()
+        {
+            return $"{this.ActionCommand} ({this.Time}) {this.ActionComment}".Trim();
         }
     }
 }

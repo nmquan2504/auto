@@ -13,14 +13,14 @@ namespace Auto
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetCursorPos(uint x, uint y);
 
-        public override string Command { get => "Move"; }
+        public override string ActionCommand { get => "Move"; }
         public uint X { get; set; }
 
         public uint Y { get; set; }
 
         public MoveMouseAction(string actionText) : base(actionText)
         {
-            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            string[] s = this.ActionText.Split(new string[] { Action.ActionParameterSeparator }, StringSplitOptions.None);
             if (this.IsValid && s != null && s.Length > 0)
             {
                 // X
@@ -41,8 +41,12 @@ namespace Auto
 
         public override void Run()
         {
-            Console.WriteLine($"{this.Command} ({this.X}, {this.Y})");
             SetCursorPos(this.X, this.Y);
+        }
+
+        public override string ToString()
+        {
+            return $"{this.ActionCommand} ({this.X}, {this.Y}) {this.ActionComment}".Trim();
         }
     }
 }
