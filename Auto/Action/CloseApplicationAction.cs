@@ -11,34 +11,33 @@ namespace Auto
 {
     class CloseApplicationAction : Action
     {
+        public override string Command { get => "Close"; }
+
         public string ApplicationName { get; set; }
 
         public string ApplicationTitle { get; set; }
 
         public CloseApplicationAction(string actionText) : base(actionText)
         {
-            this.ActionText = actionText;
-            this.Command = "Close";
-            string[] s = this.ActionText.Split(new string[] { "|" }, StringSplitOptions.None);
-            if (s != null && s.Length > 0)
+            string[] s = this.ActionText.Split(new string[] { Action.Separator }, StringSplitOptions.None);
+            if (this.IsValid && s != null && s.Length > 0)
             {
                 // Application Path
                 this.ApplicationName = "";
-                this.ApplicationName = s[2];
+                this.ApplicationName = s[1].Trim();
 
                 // Application Title
                 this.ApplicationTitle = "";
-                if (s.Length >= 4)
+                if (s.Length >= 3)
                 {
-                    this.ApplicationTitle = s[3];
+                    this.ApplicationTitle = s[2].Trim();
                 }
             }
         }
 
         public override void Run()
         {
-            Thread.Sleep(this.Delay);
-
+            Console.WriteLine($"{this.Command} ({this.ApplicationName}, {this.ApplicationTitle})");
             IntPtr hWnd = SearchForWindow(this.ApplicationName, "", this.ApplicationTitle);
             if (hWnd != IntPtr.Zero)
             {
@@ -56,7 +55,7 @@ namespace Auto
                 {
                     if (process.ProcessName.ToLower().Equals(this.ApplicationName.ToLower().ToString()) && process.MainWindowTitle.ToLower().Contains(this.ApplicationTitle.ToLower()))
                     {
-                        process.CloseMainWindow();
+                        process.Kill();
                         break;
                     }
                 }

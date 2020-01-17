@@ -1,3 +1,25 @@
-Run|2000|chrome.exe|/new-window https://www.yahoo.com
-Run|2000|chrome.exe|/new-window https://www.google.com
-Close|2000|chrome|Yahoo
+Delay|2000
+Click|L|1936|70|Click New Document
+Delay|2000
+Click|L|3073|723|Click OK
+Delay|2000
+Type|doc|Enter Document Name
+Delay|2000
+Click|L|3056|683|Click OK
+Delay|2000
+Click|L|2837|566|Click OK
+Delay|2000
+Click|L|2837|566|Click OK
+Delay|20000
+Click|L|3402|808|Click Start Recording
+Delay|5000
+Click|L|2626|1028|Click ArcSight Console on taskbar
+Delay|1000
+Move|2623|892|Move somewhere
+Delay|12000
+Click|L|3422|808|Click Close ArcSight
+Delay|2000
+Click|L|3077|271|Click Stop
+Delay|2000
+Click|L|2000|45|Click ART title bar
+Repeat|100

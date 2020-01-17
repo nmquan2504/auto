@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -21,6 +22,7 @@ namespace Auto
             }
 
             // Read action list
+            Console.WriteLine("Reading action list...");
             List<Action> actions = new List<Action>();
             try
             {
@@ -28,17 +30,22 @@ namespace Auto
                 {
                     while (!sr.EndOfStream)
                     {
+                        string s = sr.ReadLine();
                         try
                         {
-                            string s = sr.ReadLine();
                             if (!string.IsNullOrEmpty(s) && !string.IsNullOrWhiteSpace(s))
                             {
-                                actions.Add(Action.CreateAction(s));
+                                var action = Action.CreateAction(s);
+                                if (action != null)
+                                {
+                                    Console.WriteLine($"Action '{s}'");
+                                }
+                                actions.Add(action);
                             }
                         }
                         catch (Exception)
                         {
-
+                            Console.WriteLine($"ERROR! Unknown action '{s}'!");
                         }
                     }
                 }
@@ -47,8 +54,9 @@ namespace Auto
             {
                 return;
             }
+            Console.WriteLine("Done reading action list.");
 
-            // Run forever
+            // Run
             try
             {
                 int nCurrentActionIndex = 0;

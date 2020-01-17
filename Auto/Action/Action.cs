@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,53 +10,40 @@ namespace Auto
 {
     abstract class Action
     {
-        public Action(string action)
+        public const string Separator = "|";
+
+        protected Action(string action)
         {
-            this.ActionText = action;
-            string[] s = this.ActionText.Split(new string[] { "|" }, StringSplitOptions.None);
-            if (s != null && s.Length > 0)
-            {
-                // Delay (default = 100)
-                int delay = 100;
-                if (int.TryParse(s[1], out delay))
-                {
-                    this.Delay = delay;
-                }
-            }
+            this.ActionText = action.Trim();
         }
 
         public static Action CreateAction(string action)
         {
-            Action a = null;
-
-            if ((a = new RunApplicationAction(action)).IsValid())
+            var asm = Assembly.GetExecutingAssembly();
+            var types = asm.DefinedTypes;
+            foreach (var type in types)
             {
-                return a;
+                if (type.BaseType == typeof(Action))
+                {
+                    var constructor = type.GetConstructor(new Type[] { typeof(string) });
+                    if (constructor != null)
+                    {
+                        var a = (Action)constructor.Invoke(new object[] { action });
+                        if (a != null && a.IsValid)
+                        {
+                            return a;
+                        }
+                    }
+                }
             }
-
-            if ((a = new CloseApplicationAction(action)).IsValid())
-            {
-                return a;
-            }
-
-            if ((a = new LeftClickAction(action)).IsValid())
-            {
-                return a;
-            }
-
             return null;
         }
 
-        protected string ActionText { get; set; }
+        protected string ActionText { get; }
 
-        public string Command { get; set; }
+        public abstract string Command { get; }
 
-        public int Delay { get; set; }
-
-        public bool IsValid()
-        {
-            return this.ActionText.StartsWith(this.Command);
-        }
+        public bool IsValid { get => this.ActionText.StartsWith(this.Command); }
 
         public abstract void Run();
     }
